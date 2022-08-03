@@ -1,0 +1,57 @@
+{% extends 'users/detail.html' %}
+{% block user_details %}
+  <div class="col-sm-6">
+    <ul class="list-group" id="messages">
+
+      {% for message in messages %}
+
+        <li class="list-group-item">
+          <a href="/messages/{{ message.id }}" class="message-link"/>
+
+          <a href="/users/{{ user.id }}">
+            <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+          </a>
+
+          <div class="message-area">
+            <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+            <p>{{ message.text }}</p>
+          </div>
+
+          {% if message.id in likes%} 
+            
+          <form method="POST" action="/users/remove-like/{{ message.id }}" id="messages-form">
+            <button class="
+              btn 
+              btn-sm                 
+              btn-primary"
+            >
+            <i class="fa fa-solid fa-star"></i>
+          </button>
+          </form> 
+
+          {%elif message.user_id == g.user.id %}
+          <!-- don't show a like button if it's your own message -->
+          {%else%}
+          
+          <form method="POST" action="/users/add-like/{{ message.id }}" id="messages-form">
+            <!-- changed add_like to add-like, bad practice to use underscore in app.route -->
+             <button class="
+              btn 
+              btn-sm                
+              btn-secondary"
+            >              
+              <i class="fa fa-thumbs-up"></i> 
+            </button>
+            
+          </form>
+          
+          {%endif%}     
+
+        </li>
+
+      {% endfor %}
+
+    </ul>
+  </div>
+{% endblock %}

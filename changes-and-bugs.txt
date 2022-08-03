@@ -1,0 +1,25 @@
+---------------app.py-----------
+
+Site was crashing when I entered username that didn't exist. Had to add following:
+
+def list_users():
+    Changes like to ilike to make searches case insensitive
+
+
+def login():
+    if form.validate_on_submit():   
+    user_exists=User.query.filter_by(username=form.username.data).first()
+    if not user_exists: 
+        flash('Invalid user name!', 'danger') 
+        return redirect('/login')   
+
+
+def profile():
+    Editing user profile - # new password must be hashed before storing into db. If not you get a hash error
+
+    Problem with Integrity error catching duplicate username: Must add db.session.rollback(). If not, you get a Session Rollback Error instead of an Integrity Error.
+
+
+----------------------home.html--------------------------------
+#messages-form:
+    I changed action="add_like" to action="add-like", bad practice to use underscore in app.route
