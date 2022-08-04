@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
@@ -142,10 +142,7 @@ def list_users():
     Can take a 'q' param in querystring to search by that username.
     """
 
-    search = request.args.get('q')
-    print('*************8')
-    print(search)
-    
+    search = request.args.get('q')    
 
     if not search:
         users = User.query.all()
@@ -164,17 +161,21 @@ def users_show(user_id):
 
     # snagging messages in order from the database;
     # user.messages won't be in order by default
-    messages = (Message
-                .query
-                .filter(Message.user_id == user_id)
-                .order_by(Message.timestamp.desc())
-                .limit(100)
-                .all())
+    if not g.user:
+        return render_template('/users/detail.html', user=user)
     
-    likes = []
-    for like in g.user.likes:
-            likes.append(like.id)
-    return render_template('users/show.html', user=user, messages=messages, likes=likes)
+    else:
+        messages = (Message
+                    .query
+                    .filter(Message.user_id == user_id)
+                    .order_by(Message.timestamp.desc())
+                    .limit(100)
+                    .all())
+        
+        likes = []
+        for like in g.user.likes:
+                likes.append(like.id)
+        return render_template('users/show.html', user=user, messages=messages, likes=likes)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -409,6 +410,13 @@ def homepage():
 
     else:
         return render_template('home-anon.html')
+
+
+###############################################Custom 404 ###################
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('custom-404.html')
 
 
 ##############################################################################

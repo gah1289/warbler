@@ -23,3 +23,15 @@ def profile():
 ----------------------home.html--------------------------------
 #messages-form:
     I changed action="add_like" to action="add-like", bad practice to use underscore in app.route
+
+
+
+-------------test_message_views.py----------------
+
+to test logging in and out:
+
+with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+                or
+                del sess[CURR_USER_KEY]
